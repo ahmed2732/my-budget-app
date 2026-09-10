@@ -1,119 +1,1082 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Budget</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1420" />
+  <title>My Travel Budget</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
+    :root{
+      --bg:#0f1420;
+      --panel:#1a2030;
+      --panel2:#222a3d;
+      --text:#f7f8fb;
+      --muted:#9aa6c8;
+      --accent:#e83d6f;
+      --line:#303a55;
+      --shadow:0 14px 35px rgba(0,0,0,.24);
+      --radius:22px;
     }
 
-    .container {
-      max-width: 700px;
-      margin: auto;
+    *{
+      box-sizing:border-box;
     }
 
-    h1 {
-      margin-bottom: 5px;
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    button,
+    input,
+    select,
+    textarea{
+      font:inherit;
     }
 
-    input, select, button {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+    button{
+      cursor:pointer;
     }
 
-    button {
-      background: black;
-      color: white;
-      border: none;
-      cursor: pointer;
+    .app{
+      max-width:760px;
+      margin:0 auto;
+      min-height:100vh;
+      padding-bottom:96px;
     }
 
-    .transaction {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      padding:18px 18px 12px;
+      background:linear-gradient(
+        180deg,
+        rgba(15,20,32,.98),
+        rgba(15,20,32,.9),
+        rgba(15,20,32,0)
+      );
+      backdrop-filter:blur(8px);
     }
 
-    .total {
-      font-size: 28px;
-      font-weight: bold;
+    .trip-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .trip-select{
+      background:transparent;
+      color:var(--text);
+      border:0;
+      font-size:30px;
+      font-weight:800;
+      max-width:75%;
+      outline:none;
+    }
+
+    .icon-btn{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      font-size:24px;
+    }
+
+    .content{
+      padding:0 18px 24px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin:12px 0 20px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.03);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .metric{
+      padding:18px;
+    }
+
+    .metric-label{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:10px;
+    }
+
+    .metric-value{
+      font-size:28px;
+      font-weight:800;
+    }
+
+    .metric-sub{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:8px;
+    }
+
+    .progress{
+      height:8px;
+      background:#3a2030;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+
+    .progress > span{
+      display:block;
+      height:100%;
+      background:var(--accent);
+      width:0%;
+    }
+
+    .section-title{
+      font-size:24px;
+      font-weight:800;
+      margin:22px 0 12px;
+    }
+
+    .day-group{
+      margin:18px 0;
+    }
+
+    .day-head{
+      display:flex;
+      justify-content:space-between;
+      color:var(--muted);
+      font-weight:700;
+      margin:0 2px 8px;
+    }
+
+    .entry{
+      display:grid;
+      grid-template-columns:48px 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:14px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .entry:last-child{
+      border-bottom:0;
+    }
+
+    .cat-icon{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:#293149;
+      font-size:21px;
+    }
+
+    .entry-title{
+      font-weight:750;
+    }
+
+    .entry-meta{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:3px;
+    }
+
+    .entry-amount{
+      font-weight:800;
+      text-align:right;
+    }
+
+    .entry-actions{
+      display:flex;
+      gap:6px;
+      justify-content:flex-end;
+      margin-top:6px;
+    }
+
+    .tiny-btn{
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      padding:2px 4px;
+      font-size:12px;
+    }
+
+    .fab{
+      position:fixed;
+      right:max(22px, calc((100vw - 760px)/2 + 22px));
+      bottom:100px;
+      width:68px;
+      height:68px;
+      border-radius:50%;
+      border:0;
+      background:var(--accent);
+      color:white;
+      font-size:38px;
+      box-shadow:var(--shadow);
+      z-index:25;
+    }
+
+    .nav{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:16px;
+      z-index:30;
+      width:min(92vw,700px);
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      padding:7px;
+      background:rgba(26,32,48,.96);
+      border:1px solid var(--line);
+      border-radius:28px;
+      backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+    }
+
+    .nav button{
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      padding:12px 8px;
+      border-radius:22px;
+      font-weight:750;
+    }
+
+    .nav button.active{
+      background:#3a4153;
+      color:var(--text);
+    }
+
+    .view{
+      display:none;
+    }
+
+    .view.active{
+      display:block;
+    }
+
+    .form-card{
+      padding:16px;
+    }
+
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      margin:13px 0 6px;
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+      background:#111725;
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:92px;
+      resize:vertical;
+    }
+
+    .row2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .primary{
+      width:100%;
+      border:0;
+      border-radius:14px;
+      padding:14px;
+      background:var(--accent);
+      color:white;
+      font-weight:800;
+      margin-top:16px;
+    }
+
+    .secondary{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:var(--panel2);
+      color:var(--text);
+      font-weight:750;
+      margin-top:10px;
+    }
+
+    .danger{
+      background:#4a1f2a;
+      border-color:#6a2838;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .stat-card{
+      padding:18px;
+    }
+
+    .bars{
+      padding:16px;
+    }
+
+    .bar-row{
+      margin:14px 0;
+    }
+
+    .bar-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:6px;
+    }
+
+    .bar-bg{
+      height:10px;
+      border-radius:999px;
+      background:#101522;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      background:var(--accent);
+      border-radius:999px;
+    }
+
+    .empty{
+      padding:24px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.65);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:50;
+      padding:0;
+    }
+
+    .modal.open{
+      display:flex;
+    }
+
+    .sheet{
+      width:min(100%,760px);
+      max-height:92vh;
+      overflow:auto;
+      background:var(--bg);
+      border-radius:28px 28px 0 0;
+      padding:18px 18px 26px;
+      border-top:1px solid var(--line);
+    }
+
+    .sheet-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .sheet-head h2{
+      margin:6px 0 10px;
+    }
+
+    .close{
+      border:0;
+      background:var(--panel);
+      color:var(--text);
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      font-size:22px;
+    }
+
+    .pill{
+      display:inline-block;
+      padding:5px 9px;
+      border-radius:999px;
+      background:#252d43;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .trip-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .trip-item{
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .trip-name{
+      font-weight:800;
+    }
+
+    .trip-meta{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:3px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    @media(max-width:560px){
+      .hero-grid,
+      .stats-grid,
+      .row2{
+        grid-template-columns:1fr;
+      }
+
+      .trip-select{
+        font-size:26px;
+      }
+
+      .metric-value{
+        font-size:26px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-  <h1>My Budget</h1>
-  <p>Personal expense tracker</p>
+  <div class="topbar">
+    <div class="trip-row">
 
-  <div class="card">
-    <h2>This Month</h2>
-    <div class="total" id="totalSpent">$0.00</div>
-    <p>Total spent</p>
+      <select
+        id="tripSelect"
+        class="trip-select"
+        aria-label="Select trip">
+      </select>
+
+      <button
+        class="icon-btn"
+        id="manageTripsBtn"
+        title="Manage trips">
+        •••
+      </button>
+
+    </div>
   </div>
 
-  <div class="card">
+  <main class="content">
 
-    <h2>Add Transaction</h2>
+    <!-- ENTRIES VIEW -->
 
-    <input
-      type="text"
-      id="merchant"
-      placeholder="Merchant"
-    >
+    <section
+      id="entriesView"
+      class="view active">
 
-    <input
-      type="number"
-      id="amount"
-      placeholder="Amount"
-      step="0.01"
-    >
+      <div class="hero-grid">
 
-    <select id="category">
-      <option>Food</option>
-      <option>Transportation</option>
-      <option>Shopping</option>
-      <option>Housing</option>
-      <option>Travel</option>
-      <option>Entertainment</option>
-      <option>Utilities</option>
-      <option>Other</option>
-    </select>
+        <div class="card metric">
 
-    <button onclick="addTransaction()">
-      Add Transaction
+          <div class="metric-label">
+            Total Spent
+          </div>
+
+          <div
+            class="metric-value"
+            id="totalSpent">
+            $0.00
+          </div>
+
+          <div
+            class="metric-sub"
+            id="budgetSub">
+            $0.00 / $0.00
+          </div>
+
+          <div class="progress">
+            <span id="budgetProgress"></span>
+          </div>
+
+        </div>
+
+        <div class="card metric">
+
+          <div class="metric-label">
+            Remaining Daily Budget
+          </div>
+
+          <div
+            class="metric-value"
+            id="dailyBudget">
+            $0.00
+          </div>
+
+          <div
+            class="metric-sub"
+            id="daysSub">
+            0 days remaining
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="section-title">
+        Entries
+      </div>
+
+      <div id="entriesList"></div>
+
+    </section>
+
+    <!-- STATS VIEW -->
+
+    <section
+      id="statsView"
+      class="view">
+
+      <div class="section-title">
+        Stats
+      </div>
+
+      <div class="stats-grid">
+
+        <div class="card stat-card">
+          <div class="metric-label">
+            Total to Date
+          </div>
+
+          <div
+            class="metric-value"
+            id="statsTotal">
+            $0.00
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="metric-label">
+            Remaining Budget
+          </div>
+
+          <div
+            class="metric-value"
+            id="statsRemaining">
+            $0.00
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="metric-label">
+            Average / Day
+          </div>
+
+          <div
+            class="metric-value"
+            id="statsAverage">
+            $0.00
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="metric-label">
+            Entries
+          </div>
+
+          <div
+            class="metric-value"
+            id="statsCount">
+            0
+          </div>
+        </div>
+
+      </div>
+
+      <div class="section-title">
+        Spending by Category
+      </div>
+
+      <div
+        class="card bars"
+        id="categoryStats">
+      </div>
+
+    </section>
+
+    <!-- SETTINGS VIEW -->
+
+    <section
+      id="settingsView"
+      class="view">
+
+      <div class="section-title">
+        Settings
+      </div>
+
+      <div class="card form-card">
+
+        <h3 style="margin-top:0">
+          Current Trip
+        </h3>
+
+        <label>
+          Trip budget
+        </label>
+
+        <input
+          id="settingsBudget"
+          type="number"
+          min="0"
+          step="0.01">
+
+        <div class="row2">
+
+          <div>
+
+            <label>
+              Start date
+            </label>
+
+            <input
+              id="settingsStart"
+              type="date">
+
+          </div>
+
+          <div>
+
+            <label>
+              End date
+            </label>
+
+            <input
+              id="settingsEnd"
+              type="date">
+
+          </div>
+
+        </div>
+
+        <label>
+          Home currency
+        </label>
+
+        <select id="settingsCurrency">
+          <option>USD</option>
+          <option>EUR</option>
+          <option>GBP</option>
+          <option>TRY</option>
+          <option>CAD</option>
+          <option>JPY</option>
+          <option>AUD</option>
+        </select>
+
+        <button
+          class="primary"
+          id="saveTripSettingsBtn">
+
+          Save Trip Settings
+
+        </button>
+
+      </div>
+
+      <div class="section-title">
+        Data
+      </div>
+
+      <div class="card form-card">
+
+        <button
+          class="secondary"
+          id="exportCsvBtn">
+
+          Export Current Trip to CSV
+
+        </button>
+
+        <button
+          class="secondary"
+          id="exportJsonBtn">
+
+          Export Full Backup
+
+        </button>
+
+        <button
+          class="secondary"
+          id="importJsonBtn">
+
+          Restore Backup
+
+        </button>
+
+        <input
+          id="importFile"
+          type="file"
+          accept=".json,application/json"
+          class="hidden">
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <button
+    class="fab"
+    id="addBtn"
+    aria-label="Add expense">
+
+    +
+
+  </button>
+
+  <nav class="nav">
+
+    <button
+      data-view="entriesView"
+      class="active">
+
+      Entries
+
     </button>
 
+    <button
+      data-view="statsView">
+
+      Stats
+
+    </button>
+
+    <button
+      data-view="settingsView">
+
+      Settings
+
+    </button>
+
+  </nav>
+
+</div>
+
+<!-- ADD / EDIT EXPENSE MODAL -->
+
+<div
+  class="modal"
+  id="expenseModal">
+
+  <div class="sheet">
+
+    <div class="sheet-head">
+
+      <h2 id="expenseModalTitle">
+        Add Expense
+      </h2>
+
+      <button
+        class="close"
+        id="closeExpenseModal">
+
+        ×
+
+      </button>
+
+    </div>
+
+    <div class="card form-card">
+
+      <div class="row2">
+
+        <div>
+
+          <label>
+            Amount
+          </label>
+
+          <input
+            id="expenseAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="0.00">
+
+        </div>
+
+        <div>
+
+          <label>
+            Currency
+          </label>
+
+          <select id="expenseCurrency">
+            <option>USD</option>
+            <option>EUR</option>
+            <option>GBP</option>
+            <option>TRY</option>
+            <option>CAD</option>
+            <option>JPY</option>
+            <option>AUD</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <label>
+        Category
+      </label>
+
+      <select id="expenseCategory">
+        <option>Transportation</option>
+        <option>Restaurants</option>
+        <option>Accommodation</option>
+        <option>Groceries</option>
+        <option>Shopping</option>
+        <option>Activities</option>
+        <option>Drinks</option>
+        <option>Coffee</option>
+        <option>Flights</option>
+        <option>General</option>
+        <option>Fees & Charges</option>
+        <option>Sightseeing</option>
+        <option>Entertainment</option>
+        <option>Laundry</option>
+        <option>Exchange Fees</option>
+      </select>
+
+      <label>
+        Title
+      </label>
+
+      <input
+        id="expenseTitle"
+        type="text"
+        placeholder="Hotel in Bodrum">
+
+      <div class="row2">
+
+        <div>
+
+          <label>
+            Date
+          </label>
+
+          <input
+            id="expenseDate"
+            type="date">
+
+        </div>
+
+        <div>
+
+          <label>
+            Payment method
+          </label>
+
+          <select id="expensePayment">
+            <option>Credit Card</option>
+            <option>Debit Card</option>
+            <option>Cash</option>
+            <option>Apple Pay</option>
+            <option>Other</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <label>
+        Country / place
+      </label>
+
+      <input
+        id="expenseCountry"
+        type="text"
+        placeholder="Turkey">
+
+      <label>
+        Note
+      </label>
+
+      <textarea
+        id="expenseNote"
+        placeholder="Optional note">
+      </textarea>
+
+      <button
+        class="primary"
+        id="saveExpenseBtn">
+
+        Save Expense
+
+      </button>
+
+      <button
+        class="secondary danger hidden"
+        id="deleteExpenseBtn">
+
+        Delete Expense
+
+      </button>
+
+    </div>
+
   </div>
 
-  <div class="card">
+</div>
 
-    <h2>Transactions</h2>
+<!-- TRIPS MODAL -->
 
-    <div id="transactions">
-      No transactions yet.
+<div
+  class="modal"
+  id="tripsModal">
+
+  <div class="sheet">
+
+    <div class="sheet-head">
+
+      <h2>
+        Trips
+      </h2>
+
+      <button
+        class="close"
+        id="closeTripsModal">
+
+        ×
+
+      </button>
+
+    </div>
+
+    <div
+      class="trip-list"
+      id="tripList">
+    </div>
+
+    <div
+      class="card form-card"
+      style="margin-top:14px">
+
+      <h3 style="margin-top:0">
+        Create Trip
+      </h3>
+
+      <label>
+        Trip name
+      </label>
+
+      <input
+        id="newTripName"
+        type="text"
+        placeholder="Turkey 2026">
+
+      <div class="row2">
+
+        <div>
+
+          <label>
+            Start date
+          </label>
+
+          <input
+            id="newTripStart"
+            type="date">
+
+        </div>
+
+        <div>
+
+          <label>
+            End date
+          </label>
+
+          <input
+            id="newTripEnd"
+            type="date">
+
+        </div>
+
+      </div>
+
+      <div class="row2">
+
+        <div>
+
+          <label>
+            Budget
+          </label>
+
+          <input
+            id="newTripBudget"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="1000">
+
+        </div>
+
+        <div>
+
+          <label>
+            Currency
+          </label>
+
+          <select id="newTripCurrency">
+            <option>USD</option>
+            <option>EUR</option>
+            <option>GBP</option>
+            <option>TRY</option>
+            <option>CAD</option>
+            <option>JPY</option>
+            <option>AUD</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        id="createTripBtn">
+
+        Create Trip
+
+      </button>
+
     </div>
 
   </div>
@@ -122,109 +1085,2207 @@
 
 <script>
 
-let transactions =
-  JSON.parse(localStorage.getItem("transactions")) || [];
+const STORAGE_KEY =
+  "travelBudgetAppV1";
 
-function addTransaction() {
+const categoryIcons = {
 
-  const merchant =
-    document.getElementById("merchant").value;
+  "Transportation":"🚌",
+  "Restaurants":"🍴",
+  "Accommodation":"🛏️",
+  "Groceries":"🛒",
+  "Shopping":"🛍️",
+  "Activities":"🥾",
+  "Drinks":"🍸",
+  "Coffee":"☕",
+  "Flights":"✈️",
+  "General":"🏷️",
+  "Fees & Charges":"💲",
+  "Sightseeing":"🏛️",
+  "Entertainment":"🎟️",
+  "Laundry":"🧺",
+  "Exchange Fees":"💱"
 
-  const amount =
-    parseFloat(document.getElementById("amount").value);
+};
 
-  const category =
-    document.getElementById("category").value;
+let state =
+  loadState();
 
-  if (!merchant || !amount) {
-    alert("Enter a merchant and amount.");
-    return;
-  }
+let editingExpenseId =
+  null;
 
-  const transaction = {
-    id: Date.now(),
-    merchant: merchant,
-    amount: amount,
-    category: category,
-    date: new Date().toISOString()
+
+/* DEFAULT APP DATA */
+
+function defaultState(){
+
+  const today =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+  return {
+
+    currentTripId:
+      "trip-1",
+
+    trips:[
+      {
+        id:"trip-1",
+        name:"My Trip",
+        startDate:today,
+        endDate:today,
+        budget:1000,
+        currency:"USD"
+      }
+    ],
+
+    expenses:[]
+
   };
 
-  transactions.push(transaction);
-
-  saveTransactions();
-
-  document.getElementById("merchant").value = "";
-  document.getElementById("amount").value = "";
-
-  displayTransactions();
 }
 
-function saveTransactions() {
+
+/* LOAD DATA */
+
+function loadState(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+    return raw
+      ? JSON.parse(raw)
+      : defaultState();
+
+  }
+
+  catch{
+
+    return defaultState();
+
+  }
+
+}
+
+
+/* SAVE DATA */
+
+function saveState(){
 
   localStorage.setItem(
-    "transactions",
-    JSON.stringify(transactions)
+    STORAGE_KEY,
+    JSON.stringify(state)
   );
 
 }
 
-function displayTransactions() {
 
-  const container =
-    document.getElementById("transactions");
+/* CURRENT TRIP */
 
-  if (transactions.length === 0) {
+function currentTrip(){
 
-    container.innerHTML =
-      "No transactions yet.";
-
-  } else {
-
-    container.innerHTML = "";
-
-    transactions
-      .slice()
-      .reverse()
-      .forEach(transaction => {
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "transaction";
-
-        div.innerHTML = `
-          <div>
-            <strong>${transaction.merchant}</strong>
-            <br>
-            <small>${transaction.category}</small>
-          </div>
-
-          <strong>
-            $${transaction.amount.toFixed(2)}
-          </strong>
-        `;
-
-        container.appendChild(div);
-
-      });
-
-  }
-
-  const total =
-    transactions.reduce(
-      (sum, transaction) =>
-        sum + transaction.amount,
-      0
-    );
-
-  document.getElementById("totalSpent")
-    .textContent =
-      "$" + total.toFixed(2);
+  return (
+    state.trips.find(
+      trip =>
+        trip.id ===
+        state.currentTripId
+    )
+    ||
+    state.trips[0]
+  );
 
 }
 
-displayTransactions();
+
+/* CURRENT TRIP EXPENSES */
+
+function currentExpenses(){
+
+  return state.expenses.filter(
+    expense =>
+      expense.tripId ===
+      state.currentTripId
+  );
+
+}
+
+
+/* CURRENCY FORMAT */
+
+function money(
+  value,
+  currency
+){
+
+  try{
+
+    return new Intl.NumberFormat(
+      "en-US",
+      {
+        style:"currency",
+        currency:
+          currency || "USD"
+      }
+    ).format(
+      Number(value) || 0
+    );
+
+  }
+
+  catch{
+
+    return "$" +
+      (Number(value) || 0)
+      .toFixed(2);
+
+  }
+
+}
+
+
+/* DATE PARSER */
+
+function parseLocalDate(dateString){
+
+  if(!dateString){
+
+    return new Date();
+
+  }
+
+  const [year,month,day] =
+    dateString
+      .split("-")
+      .map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day
+  );
+
+}
+
+
+/* TOTAL TRIP DAYS */
+
+function daysBetweenInclusive(
+  start,
+  end
+){
+
+  const startDate =
+    parseLocalDate(start);
+
+  const endDate =
+    parseLocalDate(end);
+
+  const difference =
+    Math.floor(
+      (endDate - startDate)
+      / 86400000
+    ) + 1;
+
+  return Math.max(
+    1,
+    difference
+  );
+
+}
+
+
+/* DAYS REMAINING */
+
+function remainingDays(
+  endDate
+){
+
+  if(!endDate){
+
+    return 0;
+
+  }
+
+  const today =
+    new Date();
+
+  today.setHours(
+    0,0,0,0
+  );
+
+  const end =
+    parseLocalDate(
+      endDate
+    );
+
+  end.setHours(
+    0,0,0,0
+  );
+
+  return Math.max(
+    0,
+    Math.floor(
+      (end - today)
+      / 86400000
+    ) + 1
+  );
+
+}
+
+
+/* NICE DATE LABEL */
+
+function formatDateLabel(
+  dateString
+){
+
+  const date =
+    parseLocalDate(
+      dateString
+    );
+
+  const today =
+    new Date();
+
+  today.setHours(
+    0,0,0,0
+  );
+
+  const yesterday =
+    new Date(today);
+
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  date.setHours(
+    0,0,0,0
+  );
+
+  if(
+    date.getTime()
+    ===
+    today.getTime()
+  ){
+
+    return "Today";
+
+  }
+
+  if(
+    date.getTime()
+    ===
+    yesterday.getTime()
+  ){
+
+    return "Yesterday";
+
+  }
+
+  return date
+    .toLocaleDateString(
+      "en-US",
+      {
+        weekday:"long",
+        month:"short",
+        day:"numeric"
+      }
+    );
+
+}
+
+
+/* TRIP DROPDOWN */
+
+function renderTripSelect(){
+
+  const select =
+    document.getElementById(
+      "tripSelect"
+    );
+
+  select.innerHTML =
+    state.trips
+      .map(
+        trip =>
+          `
+          <option
+            value="${trip.id}">
+            ${escapeHtml(trip.name)}
+          </option>
+          `
+      )
+      .join("");
+
+  select.value =
+    state.currentTripId;
+
+}
+
+
+/* MAIN RENDER */
+
+function render(){
+
+  if(
+    !state.trips.length
+  ){
+
+    state =
+      defaultState();
+
+    saveState();
+
+  }
+
+  renderTripSelect();
+  renderEntries();
+  renderStats();
+  renderSettings();
+  renderTripsModal();
+
+}
+
+
+/* ENTRIES SCREEN */
+
+function renderEntries(){
+
+  const trip =
+    currentTrip();
+
+  const expenses =
+    currentExpenses()
+      .slice()
+      .sort(
+        (a,b) =>
+          b.date.localeCompare(
+            a.date
+          )
+          ||
+          b.createdAt.localeCompare(
+            a.createdAt
+          )
+      );
+
+  const total =
+    expenses.reduce(
+      (sum,expense) =>
+        sum +
+        Number(
+          expense.amountHome
+          ??
+          expense.amount
+        ),
+      0
+    );
+
+  const remaining =
+    Math.max(
+      0,
+      Number(
+        trip.budget || 0
+      )
+      -
+      total
+    );
+
+  const daysRemaining =
+    remainingDays(
+      trip.endDate
+    );
+
+  const dailyBudget =
+    daysRemaining
+      ? remaining /
+        daysRemaining
+      : 0;
+
+  const percent =
+    trip.budget
+      ? Math.min(
+          100,
+          (
+            total /
+            trip.budget
+          ) * 100
+        )
+      : 0;
+
+  document
+    .getElementById(
+      "totalSpent"
+    )
+    .textContent =
+      money(
+        total,
+        trip.currency
+      );
+
+  document
+    .getElementById(
+      "budgetSub"
+    )
+    .textContent =
+      `${money(
+        remaining,
+        trip.currency
+      )} remaining of ${money(
+        trip.budget,
+        trip.currency
+      )}`;
+
+  document
+    .getElementById(
+      "budgetProgress"
+    )
+    .style.width =
+      percent + "%";
+
+  document
+    .getElementById(
+      "dailyBudget"
+    )
+    .textContent =
+      money(
+        dailyBudget,
+        trip.currency
+      );
+
+  document
+    .getElementById(
+      "daysSub"
+    )
+    .textContent =
+      `${daysRemaining} day${
+        daysRemaining === 1
+        ? ""
+        : "s"
+      } remaining`;
+
+  const list =
+    document.getElementById(
+      "entriesList"
+    );
+
+  if(
+    !expenses.length
+  ){
+
+    list.innerHTML =
+      `
+      <div class="card empty">
+        No expenses yet.
+        Tap + to add your first one.
+      </div>
+      `;
+
+    return;
+
+  }
+
+  const grouped = {};
+
+  expenses.forEach(
+    expense => {
+
+      (
+        grouped[
+          expense.date
+        ]
+        ||= []
+      ).push(
+        expense
+      );
+
+    }
+  );
+
+  list.innerHTML =
+    Object.keys(grouped)
+      .sort()
+      .reverse()
+      .map(
+        date => {
+
+          const dayTotal =
+            grouped[date]
+              .reduce(
+                (sum,expense) =>
+                  sum +
+                  Number(
+                    expense.amountHome
+                    ??
+                    expense.amount
+                  ),
+                0
+              );
+
+          return `
+            <div class="day-group">
+
+              <div class="day-head">
+
+                <span>
+                  ${formatDateLabel(date)}
+                </span>
+
+                <span>
+                  ${money(
+                    dayTotal,
+                    trip.currency
+                  )}
+                </span>
+
+              </div>
+
+              <div class="card">
+
+                ${grouped[date]
+                  .map(
+                    expense =>
+                    `
+                    <div class="entry">
+
+                      <div class="cat-icon">
+                        ${
+                          categoryIcons[
+                            expense.category
+                          ]
+                          ||
+                          "•"
+                        }
+                      </div>
+
+                      <div>
+
+                        <div class="entry-title">
+                          ${
+                            escapeHtml(
+                              expense.title
+                              ||
+                              expense.category
+                            )
+                          }
+                        </div>
+
+                        <div class="entry-meta">
+
+                          ${
+                            escapeHtml(
+                              expense.category
+                            )
+                          }
+
+                          ${
+                            expense.paymentMethod
+                            ?
+                            " • " +
+                            escapeHtml(
+                              expense.paymentMethod
+                            )
+                            :
+                            ""
+                          }
+
+                          ${
+                            expense.country
+                            ?
+                            " • " +
+                            escapeHtml(
+                              expense.country
+                            )
+                            :
+                            ""
+                          }
+
+                        </div>
+
+                      </div>
+
+                      <div>
+
+                        <div class="entry-amount">
+
+                          ${money(
+                            expense.amountHome
+                            ??
+                            expense.amount,
+                            trip.currency
+                          )}
+
+                        </div>
+
+                        ${
+                          expense.currency
+                          &&
+                          expense.currency
+                          !==
+                          trip.currency
+                          ?
+                          `
+                          <div class="entry-meta">
+                            ${money(
+                              expense.amount,
+                              expense.currency
+                            )}
+                          </div>
+                          `
+                          :
+                          ""
+                        }
+
+                        <div class="entry-actions">
+
+                          <button
+                            class="tiny-btn"
+                            onclick="editExpense('${expense.id}')">
+
+                            Edit
+
+                          </button>
+
+                          <button
+                            class="tiny-btn"
+                            onclick="quickDelete('${expense.id}')">
+
+                            Delete
+
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+                    `
+                  )
+                  .join("")
+                }
+
+              </div>
+
+            </div>
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* STATS */
+
+function renderStats(){
+
+  const trip =
+    currentTrip();
+
+  const expenses =
+    currentExpenses();
+
+  const total =
+    expenses.reduce(
+      (sum,expense) =>
+        sum +
+        Number(
+          expense.amountHome
+          ??
+          expense.amount
+        ),
+      0
+    );
+
+  const remaining =
+    Math.max(
+      0,
+      Number(
+        trip.budget || 0
+      )
+      -
+      total
+    );
+
+  const totalDays =
+    daysBetweenInclusive(
+      trip.startDate,
+      trip.endDate
+    );
+
+  const average =
+    total /
+    totalDays;
+
+  document
+    .getElementById(
+      "statsTotal"
+    )
+    .textContent =
+      money(
+        total,
+        trip.currency
+      );
+
+  document
+    .getElementById(
+      "statsRemaining"
+    )
+    .textContent =
+      money(
+        remaining,
+        trip.currency
+      );
+
+  document
+    .getElementById(
+      "statsAverage"
+    )
+    .textContent =
+      money(
+        average,
+        trip.currency
+      );
+
+  document
+    .getElementById(
+      "statsCount"
+    )
+    .textContent =
+      expenses.length;
+
+  const byCategory = {};
+
+  expenses.forEach(
+    expense => {
+
+      byCategory[
+        expense.category
+      ] =
+        (
+          byCategory[
+            expense.category
+          ]
+          || 0
+        )
+        +
+        Number(
+          expense.amountHome
+          ??
+          expense.amount
+        );
+
+    }
+  );
+
+  const items =
+    Object.entries(
+      byCategory
+    )
+    .sort(
+      (a,b) =>
+        b[1] - a[1]
+    );
+
+  const box =
+    document.getElementById(
+      "categoryStats"
+    );
+
+  if(
+    !items.length
+  ){
+
+    box.innerHTML =
+      `
+      <div class="empty">
+        Add expenses to see category stats.
+      </div>
+      `;
+
+    return;
+
+  }
+
+  box.innerHTML =
+    items.map(
+      ([category,value]) => {
+
+        const percentage =
+          total
+          ?
+          (
+            value /
+            total
+          ) * 100
+          :
+          0;
+
+        return `
+          <div class="bar-row">
+
+            <div class="bar-head">
+
+              <span>
+                ${
+                  categoryIcons[
+                    category
+                  ]
+                  ||
+                  "•"
+                }
+                ${escapeHtml(category)}
+              </span>
+
+              <span>
+                ${money(
+                  value,
+                  trip.currency
+                )}
+                ·
+                ${percentage.toFixed(0)}%
+              </span>
+
+            </div>
+
+            <div class="bar-bg">
+
+              <div
+                class="bar-fill"
+                style="width:${percentage}%">
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+      }
+    )
+    .join("");
+
+}
+
+
+/* SETTINGS */
+
+function renderSettings(){
+
+  const trip =
+    currentTrip();
+
+  document
+    .getElementById(
+      "settingsBudget"
+    )
+    .value =
+      trip.budget ?? 0;
+
+  document
+    .getElementById(
+      "settingsStart"
+    )
+    .value =
+      trip.startDate || "";
+
+  document
+    .getElementById(
+      "settingsEnd"
+    )
+    .value =
+      trip.endDate || "";
+
+  document
+    .getElementById(
+      "settingsCurrency"
+    )
+    .value =
+      trip.currency || "USD";
+
+}
+
+
+/* TRIP LIST */
+
+function renderTripsModal(){
+
+  const list =
+    document.getElementById(
+      "tripList"
+    );
+
+  list.innerHTML =
+    state.trips
+      .map(
+        trip => {
+
+          const total =
+            state.expenses
+              .filter(
+                expense =>
+                  expense.tripId
+                  ===
+                  trip.id
+              )
+              .reduce(
+                (sum,expense) =>
+                  sum +
+                  Number(
+                    expense.amountHome
+                    ??
+                    expense.amount
+                  ),
+                0
+              );
+
+          return `
+            <div class="card trip-item">
+
+              <div>
+
+                <div class="trip-name">
+                  ${escapeHtml(trip.name)}
+                </div>
+
+                <div class="trip-meta">
+
+                  ${trip.startDate || ""}
+
+                  ${
+                    trip.endDate
+                    ?
+                    " → " +
+                    trip.endDate
+                    :
+                    ""
+                  }
+
+                  •
+
+                  ${money(
+                    total,
+                    trip.currency
+                  )}
+
+                </div>
+
+              </div>
+
+              <div>
+
+                ${
+                  trip.id
+                  ===
+                  state.currentTripId
+                  ?
+                  `
+                  <span class="pill">
+                    Current
+                  </span>
+                  `
+                  :
+                  `
+                  <button
+                    class="tiny-btn"
+                    onclick="switchTrip('${trip.id}')">
+
+                    Open
+
+                  </button>
+                  `
+                }
+
+                ${
+                  state.trips.length > 1
+                  ?
+                  `
+                  <button
+                    class="tiny-btn"
+                    onclick="deleteTrip('${trip.id}')">
+
+                    Delete
+
+                  </button>
+                  `
+                  :
+                  ""
+                }
+
+              </div>
+
+            </div>
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* OPEN EXPENSE MODAL */
+
+function openExpenseModal(
+  expense = null
+){
+
+  const trip =
+    currentTrip();
+
+  editingExpenseId =
+    expense?.id || null;
+
+  document
+    .getElementById(
+      "expenseModalTitle"
+    )
+    .textContent =
+      expense
+      ?
+      "Edit Expense"
+      :
+      "Add Expense";
+
+  document
+    .getElementById(
+      "expenseAmount"
+    )
+    .value =
+      expense?.amount ?? "";
+
+  document
+    .getElementById(
+      "expenseCurrency"
+    )
+    .value =
+      expense?.currency
+      ||
+      trip.currency
+      ||
+      "USD";
+
+  document
+    .getElementById(
+      "expenseCategory"
+    )
+    .value =
+      expense?.category
+      ||
+      "Restaurants";
+
+  document
+    .getElementById(
+      "expenseTitle"
+    )
+    .value =
+      expense?.title || "";
+
+  document
+    .getElementById(
+      "expenseDate"
+    )
+    .value =
+      expense?.date
+      ||
+      new Date()
+        .toISOString()
+        .slice(0,10);
+
+  document
+    .getElementById(
+      "expensePayment"
+    )
+    .value =
+      expense?.paymentMethod
+      ||
+      "Credit Card";
+
+  document
+    .getElementById(
+      "expenseCountry"
+    )
+    .value =
+      expense?.country || "";
+
+  document
+    .getElementById(
+      "expenseNote"
+    )
+    .value =
+      expense?.note || "";
+
+  document
+    .getElementById(
+      "deleteExpenseBtn"
+    )
+    .classList
+    .toggle(
+      "hidden",
+      !expense
+    );
+
+  document
+    .getElementById(
+      "expenseModal"
+    )
+    .classList
+    .add("open");
+
+}
+
+
+/* CLOSE EXPENSE MODAL */
+
+function closeExpenseModal(){
+
+  document
+    .getElementById(
+      "expenseModal"
+    )
+    .classList
+    .remove("open");
+
+  editingExpenseId =
+    null;
+
+}
+
+
+/* SAVE EXPENSE */
+
+function saveExpense(){
+
+  const amount =
+    Number(
+      document
+        .getElementById(
+          "expenseAmount"
+        )
+        .value
+    );
+
+  const title =
+    document
+      .getElementById(
+        "expenseTitle"
+      )
+      .value
+      .trim();
+
+  if(
+    !amount
+    ||
+    amount <= 0
+  ){
+
+    alert(
+      "Enter an amount greater than 0."
+    );
+
+    return;
+
+  }
+
+  const payload = {
+
+    tripId:
+      state.currentTripId,
+
+    amount:
+      amount,
+
+    amountHome:
+      amount,
+
+    currency:
+      document
+        .getElementById(
+          "expenseCurrency"
+        )
+        .value,
+
+    category:
+      document
+        .getElementById(
+          "expenseCategory"
+        )
+        .value,
+
+    title:
+      title
+      ||
+      document
+        .getElementById(
+          "expenseCategory"
+        )
+        .value,
+
+    date:
+      document
+        .getElementById(
+          "expenseDate"
+        )
+        .value,
+
+    paymentMethod:
+      document
+        .getElementById(
+          "expensePayment"
+        )
+        .value,
+
+    country:
+      document
+        .getElementById(
+          "expenseCountry"
+        )
+        .value
+        .trim(),
+
+    note:
+      document
+        .getElementById(
+          "expenseNote"
+        )
+        .value
+        .trim()
+
+  };
+
+  if(
+    editingExpenseId
+  ){
+
+    const index =
+      state.expenses
+        .findIndex(
+          expense =>
+            expense.id
+            ===
+            editingExpenseId
+        );
+
+    if(
+      index >= 0
+    ){
+
+      state.expenses[index] = {
+
+        ...state.expenses[index],
+        ...payload
+
+      };
+
+    }
+
+  }
+
+  else{
+
+    state.expenses.push({
+
+      id:
+        "exp-"
+        +
+        Date.now()
+        +
+        "-"
+        +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      createdAt:
+        new Date()
+          .toISOString(),
+
+      ...payload
+
+    });
+
+  }
+
+  saveState();
+
+  closeExpenseModal();
+
+  render();
+
+}
+
+
+/* EDIT EXPENSE */
+
+function editExpense(id){
+
+  const expense =
+    state.expenses.find(
+      item =>
+        item.id === id
+    );
+
+  if(
+    expense
+  ){
+
+    openExpenseModal(
+      expense
+    );
+
+  }
+
+}
+
+window.editExpense =
+  editExpense;
+
+
+/* QUICK DELETE */
+
+function quickDelete(id){
+
+  if(
+    !confirm(
+      "Delete this expense?"
+    )
+  ){
+
+    return;
+
+  }
+
+  state.expenses =
+    state.expenses.filter(
+      expense =>
+        expense.id !== id
+    );
+
+  saveState();
+
+  render();
+
+}
+
+window.quickDelete =
+  quickDelete;
+
+
+/* DELETE WHILE EDITING */
+
+function deleteEditingExpense(){
+
+  if(
+    !editingExpenseId
+  ){
+
+    return;
+
+  }
+
+  if(
+    !confirm(
+      "Delete this expense?"
+    )
+  ){
+
+    return;
+
+  }
+
+  state.expenses =
+    state.expenses.filter(
+      expense =>
+        expense.id
+        !==
+        editingExpenseId
+    );
+
+  saveState();
+
+  closeExpenseModal();
+
+  render();
+
+}
+
+
+/* SAVE TRIP SETTINGS */
+
+function saveTripSettings(){
+
+  const trip =
+    currentTrip();
+
+  trip.budget =
+    Number(
+      document
+        .getElementById(
+          "settingsBudget"
+        )
+        .value
+    )
+    || 0;
+
+  trip.startDate =
+    document
+      .getElementById(
+        "settingsStart"
+      )
+      .value;
+
+  trip.endDate =
+    document
+      .getElementById(
+        "settingsEnd"
+      )
+      .value;
+
+  trip.currency =
+    document
+      .getElementById(
+        "settingsCurrency"
+      )
+      .value;
+
+  saveState();
+
+  render();
+
+  alert(
+    "Trip settings saved."
+  );
+
+}
+
+
+/* CREATE TRIP */
+
+function createTrip(){
+
+  const name =
+    document
+      .getElementById(
+        "newTripName"
+      )
+      .value
+      .trim();
+
+  if(
+    !name
+  ){
+
+    alert(
+      "Enter a trip name."
+    );
+
+    return;
+
+  }
+
+  const id =
+    "trip-" +
+    Date.now();
+
+  state.trips.push({
+
+    id:id,
+
+    name:name,
+
+    startDate:
+      document
+        .getElementById(
+          "newTripStart"
+        )
+        .value
+      ||
+      new Date()
+        .toISOString()
+        .slice(0,10),
+
+    endDate:
+      document
+        .getElementById(
+          "newTripEnd"
+        )
+        .value
+      ||
+      new Date()
+        .toISOString()
+        .slice(0,10),
+
+    budget:
+      Number(
+        document
+          .getElementById(
+            "newTripBudget"
+          )
+          .value
+      )
+      || 0,
+
+    currency:
+      document
+        .getElementById(
+          "newTripCurrency"
+        )
+        .value
+
+  });
+
+  state.currentTripId =
+    id;
+
+  saveState();
+
+  document
+    .getElementById(
+      "newTripName"
+    )
+    .value =
+      "";
+
+  document
+    .getElementById(
+      "newTripBudget"
+    )
+    .value =
+      "";
+
+  render();
+
+  document
+    .getElementById(
+      "tripsModal"
+    )
+    .classList
+    .remove("open");
+
+}
+
+
+/* SWITCH TRIP */
+
+function switchTrip(id){
+
+  state.currentTripId =
+    id;
+
+  saveState();
+
+  render();
+
+  document
+    .getElementById(
+      "tripsModal"
+    )
+    .classList
+    .remove("open");
+
+}
+
+window.switchTrip =
+  switchTrip;
+
+
+/* DELETE TRIP */
+
+function deleteTrip(id){
+
+  if(
+    !confirm(
+      "Delete this trip and all of its expenses?"
+    )
+  ){
+
+    return;
+
+  }
+
+  state.trips =
+    state.trips.filter(
+      trip =>
+        trip.id !== id
+    );
+
+  state.expenses =
+    state.expenses.filter(
+      expense =>
+        expense.tripId
+        !==
+        id
+    );
+
+  if(
+    state.currentTripId
+    ===
+    id
+  ){
+
+    state.currentTripId =
+      state.trips[0]?.id;
+
+  }
+
+  saveState();
+
+  render();
+
+}
+
+window.deleteTrip =
+  deleteTrip;
+
+
+/* EXPORT CSV */
+
+function exportCsv(){
+
+  const trip =
+    currentTrip();
+
+  const rows = [
+
+    [
+      "Date",
+      "Title",
+      "Category",
+      "Amount",
+      "Currency",
+      "Payment Method",
+      "Country",
+      "Note"
+    ]
+
+  ];
+
+  currentExpenses()
+    .sort(
+      (a,b) =>
+        a.date.localeCompare(
+          b.date
+        )
+    )
+    .forEach(
+      expense => {
+
+        rows.push([
+
+          expense.date,
+          expense.title,
+          expense.category,
+          expense.amount,
+          expense.currency,
+          expense.paymentMethod,
+          expense.country,
+          expense.note
+
+        ]);
+
+      }
+    );
+
+  const csv =
+    rows.map(
+
+      row =>
+        row.map(
+          value =>
+            `"${String(
+              value ?? ""
+            )
+            .replaceAll(
+              '"',
+              '""'
+            )}"`
+        )
+        .join(",")
+
+    )
+    .join("\n");
+
+  downloadBlob(
+    csv,
+    `${safeName(
+      trip.name
+    )}-expenses.csv`,
+    "text/csv;charset=utf-8"
+  );
+
+}
+
+
+/* EXPORT JSON */
+
+function exportJson(){
+
+  downloadBlob(
+
+    JSON.stringify(
+      state,
+      null,
+      2
+    ),
+
+    "travel-budget-backup.json",
+
+    "application/json"
+
+  );
+
+}
+
+
+/* IMPORT JSON */
+
+function importJson(file){
+
+  const reader =
+    new FileReader();
+
+  reader.onload =
+    () => {
+
+      try{
+
+        const parsed =
+          JSON.parse(
+            reader.result
+          );
+
+        if(
+          !parsed.trips
+          ||
+          !parsed.expenses
+        ){
+
+          throw new Error();
+
+        }
+
+        state =
+          parsed;
+
+        saveState();
+
+        render();
+
+        alert(
+          "Backup restored."
+        );
+
+      }
+
+      catch{
+
+        alert(
+          "That backup file is not valid."
+        );
+
+      }
+
+    };
+
+  reader.readAsText(
+    file
+  );
+
+}
+
+
+/* DOWNLOAD FILE */
+
+function downloadBlob(
+  content,
+  filename,
+  type
+){
+
+  const blob =
+    new Blob(
+      [content],
+      {
+        type:type
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href =
+    url;
+
+  link.download =
+    filename;
+
+  link.click();
+
+  setTimeout(
+    () =>
+      URL.revokeObjectURL(
+        url
+      ),
+    500
+  );
+
+}
+
+
+/* CLEAN FILE NAME */
+
+function safeName(text){
+
+  return (
+    text
+    ||
+    "trip"
+  )
+  .toLowerCase()
+  .replace(
+    /[^a-z0-9]+/g,
+    "-"
+  )
+  .replace(
+    /^-|-$/g,
+    ""
+  );
+
+}
+
+
+/* HTML SECURITY */
+
+function escapeHtml(text){
+
+  return String(
+    text ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+    character => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    })[character]
+  );
+
+}
+
+
+/* EVENT LISTENERS */
+
+document
+  .getElementById(
+    "tripSelect"
+  )
+  .addEventListener(
+    "change",
+    event => {
+
+      state.currentTripId =
+        event.target.value;
+
+      saveState();
+
+      render();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "addBtn"
+  )
+  .addEventListener(
+    "click",
+    () =>
+      openExpenseModal()
+  );
+
+
+document
+  .getElementById(
+    "closeExpenseModal"
+  )
+  .addEventListener(
+    "click",
+    closeExpenseModal
+  );
+
+
+document
+  .getElementById(
+    "saveExpenseBtn"
+  )
+  .addEventListener(
+    "click",
+    saveExpense
+  );
+
+
+document
+  .getElementById(
+    "deleteExpenseBtn"
+  )
+  .addEventListener(
+    "click",
+    deleteEditingExpense
+  );
+
+
+document
+  .getElementById(
+    "manageTripsBtn"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      renderTripsModal();
+
+      document
+        .getElementById(
+          "tripsModal"
+        )
+        .classList
+        .add("open");
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "closeTripsModal"
+  )
+  .addEventListener(
+    "click",
+    () =>
+      document
+        .getElementById(
+          "tripsModal"
+        )
+        .classList
+        .remove("open")
+  );
+
+
+document
+  .getElementById(
+    "createTripBtn"
+  )
+  .addEventListener(
+    "click",
+    createTrip
+  );
+
+
+document
+  .getElementById(
+    "saveTripSettingsBtn"
+  )
+  .addEventListener(
+    "click",
+    saveTripSettings
+  );
+
+
+document
+  .getElementById(
+    "exportCsvBtn"
+  )
+  .addEventListener(
+    "click",
+    exportCsv
+  );
+
+
+document
+  .getElementById(
+    "exportJsonBtn"
+  )
+  .addEventListener(
+    "click",
+    exportJson
+  );
+
+
+document
+  .getElementById(
+    "importJsonBtn"
+  )
+  .addEventListener(
+    "click",
+    () =>
+      document
+        .getElementById(
+          "importFile"
+        )
+        .click()
+  );
+
+
+document
+  .getElementById(
+    "importFile"
+  )
+  .addEventListener(
+    "change",
+    event => {
+
+      if(
+        event.target.files?.[0]
+      ){
+
+        importJson(
+          event.target.files[0]
+        );
+
+      }
+
+      event.target.value =
+        "";
+
+    }
+  );
+
+
+document
+  .querySelectorAll(
+    ".nav button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".nav button"
+            )
+            .forEach(
+              item =>
+                item.classList
+                  .remove(
+                    "active"
+                  )
+            );
+
+          button.classList
+            .add(
+              "active"
+            );
+
+          document
+            .querySelectorAll(
+              ".view"
+            )
+            .forEach(
+              view =>
+                view.classList
+                  .remove(
+                    "active"
+                  )
+            );
+
+          document
+            .getElementById(
+              button.dataset.view
+            )
+            .classList
+            .add(
+              "active"
+            );
+
+          document
+            .getElementById(
+              "addBtn"
+            )
+            .classList
+            .toggle(
+              "hidden",
+              button.dataset.view
+              !==
+              "entriesView"
+            );
+
+        }
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "expenseModal"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target.id
+        ===
+        "expenseModal"
+      ){
+
+        closeExpenseModal();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "tripsModal"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target.id
+        ===
+        "tripsModal"
+      ){
+
+        event.currentTarget
+          .classList
+          .remove(
+            "open"
+          );
+
+      }
+
+    }
+  );
+
+
+/* INITIAL LOAD */
+
+render();
 
 </script>
 
